@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot HTML Page</title>
+    <style>
+
+        /* Add your CSS styles here */
+
+        /* Absolute Center Spinner */
+        #spin {
+            position: fixed;
+            z-index: 999;
+            overflow: show;
+            margin: auto;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 50px;
+        }
+
+        .user-message {
+            margin: 10px;
+            background-color: lightgray;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .bot-message {
+            margin: 10px;
+            background-color: lightblue;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="chatbot-container">
+        @Html.Partial("_ChatLog") <!-- Include the chat log partial view here -->
+        <div class="input-group mb-3">
+            @*                        <input type="text" class="form-control" id="message-input" placeholder="Type your message..."style="font-size: 30px; line-height: 50px;" onkeydown="if (event.keyCode === 13) { this.value += '\n'; return false; }">
+            *@
+<textarea class="form-control" id="message-input" placeholder="Type your message..." style="font-size: 16px; line-height: 24px;"></textarea>
+
+            <div class="input-group-append">
+                <button id="send-button" class="btn btn-outline-primary" type="button">Search</button>
+            </div>
+        </div>
+
+    </div>
+    <div class="spinner-border text-primary" id="spin" role="status" style="display:none">
+    </div>
+    <pre style="white-space: pre-wrap;" id="output">  </pre>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var context = ""; // Initialize the conversation context
+
+            $('#message-input').keypress(function (e) {
+                if (e.which === 13) {
+                    $('#spin').show();
+
+                    var data = $('#message-input').val();
+
+                    $.ajax({
+                        url: '/Home/Get',
+                        type: 'POST',
+                        data: { 'input': data, 'context': context },
+                        success: function (response) {
+                            $('#spin').hide();
+
+                            // Append the response to the chat log
+                            $('#chat-log').append('<div class="user-message">' + data + '</div>');
+                            $('#chat-log').append('<div class="bot-message">' + response + '</div>');
+
+                            // Update the conversation context with the latest response
+                            context += '\n' + data + '\n' + response;
+
+                            // Clear the input field
+                            $('#message-input').val('');
+                        },
+                        error: function (xhr, status, error) {
+                            // Handle the error
+                            $('#output').html(error);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
