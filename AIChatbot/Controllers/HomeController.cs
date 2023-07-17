@@ -49,7 +49,6 @@ namespace AIChatbot.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", API_KEY);
 
-            // ...
 
             try
             {
@@ -76,7 +75,7 @@ namespace AIChatbot.Controllers
                 return Json(ex.Message);
             }
 
-            // ...
+      
 
         }
     }
